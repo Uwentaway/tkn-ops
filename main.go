@@ -21,5 +21,10 @@ func main() {
 			"say":  "Hello World",
 		})
 	})
-	r.Run()
+	r.GET("/healthz", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{
+			"data": "Running",
+		})
+	})
+	r.Run(":8080")
 }
