@@ -1,0 +1,23 @@
+apiVersion: tekton.dev/v1alpha1
+kind: Task
+metadata:
+  name: deploy-to-k8s
+spec:
+  workspaces:
+    - name: source
+    - name: kubernetesconfig
+      mountPath: /root/.kube
+  params:
+    - name: pathToYamlFile
+      description: The path to the yaml file to deploy within the git source
+      default: deployment.yaml
+    - name: IMAGE
+    - name: TAG
+  steps:
+    - name: run-kubectl
+      image: registry.cn-hangzhou.aliyuncs.com/coolops/kubectl:1.19.16
+      workingDir: $(workspaces.source.path)
+      script: |
+        sed -i s#IMAGE#$(params.IMAGE)#g $(params.pathToYamlFile)
+        sed -i s#TAG#$(params.TAG)#g $(params.pathToYamlFile)
+        kubectl apply -f $(params.pathToYamlFile)

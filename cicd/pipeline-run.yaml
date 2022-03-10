@@ -1,0 +1,35 @@
+apiVersion: tekton.dev/v1beta1
+kind: PipelineRun
+metadata:
+  name: devops-hello-world-pipeline-run
+spec:
+  pipelineRef:
+    name: devops-hello-world-pipeline
+  params:
+    - name: revision
+      value: master
+    - name: git_url
+      value: https://gitee.com/coolops/devops-hello-world.git
+    - name: imageUrl
+      value: registry.cn-hangzhou.aliyuncs.com/coolops/devops-hello-world
+    - name: imageTag
+      value: latest
+    - name: pathToDockerfile
+      value: Dockerfile
+  workspaces:
+    - name: go-repo-pvc
+      volumeClaimTemplate:
+        spec:
+          accessModes:
+            - ReadWriteOnce
+          storageClassName: openebs-hostpath
+          resources:
+            requests:
+              storage: 1Gi
+    - name: docker-config
+      secret:
+        secretName: docker-config
+    - name: kubernetes-config
+      secret:
+        secretName: kubernetes-config
+  serviceAccountName: tekton-build-sa
