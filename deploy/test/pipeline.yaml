@@ -37,7 +37,7 @@ spec:
         spec:
           accessModes:
           - ReadWriteOnce
-          storageClassName: rbd 
+          storageClassName: local 
           resources:
             requests:
               storage: 1Gi
