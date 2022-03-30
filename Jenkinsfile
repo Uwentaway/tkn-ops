@@ -1,6 +1,13 @@
 pipeline {
   agent any
   stages {
+    stage('get branch'){
+      steps{
+        sctipt{
+          print(branch)
+        }
+      }
+    }
     stage('deploy to dev'){
         when{
           branch 'dev'
