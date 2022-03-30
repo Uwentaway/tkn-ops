@@ -2,7 +2,7 @@ apiVersion: tekton.dev/v1beta1
 kind: PipelineRun
 metadata:
   generateName: test-hello-word-pipeline-run- 
-  namespace: tekton-devops
+  namespace: tekton-devops-pipeline
 spec:
   pipelineRef:
     name: rd-pipeline
