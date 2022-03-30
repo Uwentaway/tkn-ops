@@ -3,7 +3,7 @@ pipeline {
   stages {
     stage('get branch'){
       steps{
-        sctipt{
+        script{
           print(branch)
         }
       }
