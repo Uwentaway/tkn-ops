@@ -1,11 +1,15 @@
 pipeline {
   agent any
   stages {
-    stage('Stage') {
+    stage('checkout') {
       steps {
         checkout scm
-        tektonCreateRaw input: 'deploy/test/pipeline.yaml', inputType: 'FILE', namespace: 'tekton-devops-pipeline'
       }
+    }
+    stage('run tekton'){
+        steps{
+            tektonCreateRaw enableCatalog: true, input: 'deploy/test/pipeline.yaml', inputType: 'FILE', namespace: 'tekton-devops-pipeline'
+        }
     }
   }
 }
