@@ -4,7 +4,7 @@ pipeline {
     stage('Stage') {
       steps {
         checkout scm
-        tektonCreateRaw input: 'deploy/test/pipeline.yaml', inputType: 'FILE', namespace: 'tekton-devops'
+        tektonCreateRaw input: 'deploy/test/pipeline.yaml', inputType: 'FILE', namespace: 'tekton-devops-pipeline'
       }
     }
   }
