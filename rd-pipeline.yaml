@@ -1,0 +1,237 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: rd-pipeline
+spec:
+  workspaces: # 声明 workspaces
+    - name: rd-repo-pvc
+    - name: docker-config
+    - name: kubernetes-config
+  params:
+    # 定义代码仓库
+    - name: git_url
+    - name: revision
+      type: string
+      default: "master"
+    - name: gitInitImage
+      type: string
+      default: "registry.cn-hangzhou.aliyuncs.com/coolops/tekton-git-init:v0.29"
+    # 定义镜像参数
+    - name: pathToDockerfile
+      description: The path to the build context, used by Kaniko - within the workspace
+      default: .
+    - name: imageUrl
+      description: Url of image repository
+    - name: imageTag
+      description: Tag to apply to the built image
+      default: latest
+    - name: chart_name
+      type: string
+      default: coolops/coolops-rd
+    - name: chart_username
+      type: string
+    - name: chart_password
+      type: string
+    - name: app_name
+      type: string
+    - name: namespace
+      type: string
+      default: default
+    # 定义代码扫描
+    - name: sonar_username
+      type: string
+      default: admin
+    - name: sonar_password
+      type: string
+      default: admin
+    - name: sonar_url
+      type: string
+  tasks: # 添加task到流水线中
+    - name: clone
+      taskRef:
+        name: git-clone
+      workspaces:
+        - name: output
+          workspace: rd-repo-pvc
+      params:
+        - name: url
+          value: $(params.git_url)
+        - name: revision
+          value: $(params.revision)
+        - name: gitInitImage
+          value: $(params.gitInitImage)
+    - name: unit-test
+      workspaces: # 传递 workspaces
+        - name: source
+          workspace: rd-repo-pvc
+      taskRef:
+        name: unit-test
+      runAfter:
+        - clone
+    - name: build-push-image
+      params:
+        - name: pathToDockerfile
+          value: $(params.pathToDockerfile)
+        - name: imageUrl
+          value: $(params.imageUrl)
+        - name: imageTag
+          value: $(tasks.clone.results.commit)
+      taskRef:
+        name: build-push-image
+      runAfter:
+        - unit-test
+      workspaces: # 传递 workspaces
+        - name: source
+          workspace: rd-repo-pvc
+        - name: dockerconfig
+          workspace: docker-config
+    - name: deploy-to-dev
+      when:
+        - input: $(params.revision)
+          operator: in
+          values:
+            - dev
+      taskRef:
+        name: helm-to-k8s
+      params:
+        - name: IMAGE
+          value: $(params.imageUrl)
+        - name: TAG
+          value: $(tasks.clone.results.commit)
+        - name: BRANCH_NAME
+          value: $(params.revision)
+        - name: CHART_NAME
+          value: $(params.chart_name)
+        - name: CHART_USERNAME
+          value: $(params.chart_username)
+        - name: CHART_PASSWORD
+          value: $(params.chart_password)
+        - name: APP_NAME
+          value: $(params.app_name)
+        - name: NAMESPACE
+          value: $(params.namespace)
+      workspaces:
+        - name: source
+          workspace: rd-repo-pvc
+        - name: kubernetesconfig
+          workspace: kubernetes-config
+      runAfter:
+        - build-push-image
+    - name: deploy-to-test
+      when:
+        - input: $(params.revision)
+          operator: in
+          values:
+            - test
+      taskRef:
+        name: helm-to-k8s
+      params:
+        - name: IMAGE
+          value: $(params.imageUrl)
+        - name: TAG
+          value: $(tasks.clone.results.commit)
+        - name: BRANCH_NAME
+          value: $(params.revision)
+        - name: CHART_NAME
+          value: $(params.chart_name)
+        - name: CHART_USERNAME
+          value: $(params.chart_username)
+        - name: CHART_PASSWORD
+          value: $(params.chart_password)
+        - name: APP_NAME
+          value: $(params.app_name)
+        - name: NAMESPACE
+          value: $(params.namespace)
+      workspaces:
+        - name: source
+          workspace: rd-repo-pvc
+        - name: kubernetesconfig
+          workspace: kubernetes-config
+      runAfter:
+        - build-push-image
+    - name: deploy-to-pre
+      when:
+        - input: $(params.revision)
+          operator: in
+          values:
+            - pre
+      taskRef:
+        name: helm-to-k8s
+      params:
+        - name: IMAGE
+          value: $(params.imageUrl)
+        - name: TAG
+          value: $(tasks.clone.results.commit)
+        - name: BRANCH_NAME
+          value: $(params.revision)
+        - name: CHART_NAME
+          value: $(params.chart_name)
+        - name: CHART_USERNAME
+          value: $(params.chart_username)
+        - name: CHART_PASSWORD
+          value: $(params.chart_password)
+        - name: APP_NAME
+          value: $(params.app_name)
+        - name: NAMESPACE
+          value: $(params.namespace)
+      workspaces:
+        - name: source
+          workspace: rd-repo-pvc
+        - name: kubernetesconfig
+          workspace: kubernetes-config
+      runAfter:
+        - build-push-image
+    - name: deploy-to-prod
+      when:
+        - input: $(params.revision)
+          operator: in
+          values:
+            - prod
+      taskRef:
+        name: helm-to-k8s
+      params:
+        - name: IMAGE
+          value: $(params.imageUrl)
+        - name: TAG
+          value: $(tasks.clone.results.commit)
+        - name: BRANCH_NAME
+          value: $(params.revision)
+        - name: CHART_NAME
+          value: $(params.chart_name)
+        - name: CHART_USERNAME
+          value: $(params.chart_username)
+        - name: CHART_PASSWORD
+          value: $(params.chart_password)
+        - name: APP_NAME
+          value: $(params.app_name)
+        - name: NAMESPACE
+          value: $(params.namespace)
+      workspaces:
+        - name: source
+          workspace: rd-repo-pvc
+        - name: kubernetesconfig
+          workspace: kubernetes-config
+      runAfter:
+        - build-push-image
+    - name: sonar-scanner
+      when:
+        - input: $(params.revision)
+          operator: in
+          values:
+            - test
+      taskRef:
+        name: sonar-scanner
+      runAfter:
+        - clone
+      params:
+        - name: SONAR_USERNAME
+          value: $(params.sonar_username)
+        - name: SONAR_PASSWORD
+          value: $(params.sonar_password)
+        - name: SONAR_URL
+          value: $(params.sonar_url)
+        - name: APP_NAME
+          value: $(params.app_name)
+      workspaces:
+        - name: source
+          workspace: rd-repo-pvc

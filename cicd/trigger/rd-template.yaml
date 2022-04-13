@@ -1,0 +1,70 @@
+apiVersion: triggers.tekton.dev/v1beta1 
+kind: TriggerTemplate
+metadata:
+  name: trigger-rd-pipeline-template
+spec:
+  params:
+    - name: gitrevision
+      description: The git revision
+      default: master
+    - name: gitrepositoryurl
+      description: The git repository url
+    - name: namespace
+      description: The namespace to create the resources
+      default: tekton-devops-pipeline
+    - name: projectname
+      description: The project name
+    - name: imagetag
+      description: The image tag
+      default: latest
+  resourcetemplates:
+    - apiVersion: tekton.dev/v1alpha1
+      kind: PipelineRun
+      metadata:
+        name: rd-pipeline-run-$(uid)
+        namespace: tekton-devops-pipeline 
+      spec:
+        serviceAccountName: tekton-build-sa
+        params: 
+        - name: revision
+          value: test
+        - name: git_url
+          value: $(tt.params.gitrepositoryurl)
+        - name: imageUrl
+          value: registry.cn-hangzhou.aliyuncs.com/coolops/$(tt.params.projectname)
+        - name: imageTag
+          value: latest
+        - name: pathToDockerfile
+          value: Dockerfile
+        - name: chart_username
+          value: xxxx
+        - name: chart_password
+          value: xxxxx
+        - name: app_name
+          value: hello-world
+        - name: namespace
+          value: default
+        - name: sonar_username
+          value: xxxx
+        - name: sonar_password
+          value: xxxxx
+        - name: sonar_url
+          value: http://sonarqube.coolops.cn
+        pipelineRef:
+          name: rd-pipeline
+        workspaces:
+        - name: rd-repo-pvc
+          volumeClaimTemplate:
+            spec:
+              accessModes:
+              - ReadWriteOnce
+              storageClassName: local 
+              resources:
+                requests:
+                  storage: 1Gi
+        - name: docker-config
+          secret:
+            secretName: docker-config
+        - name: kubernetes-config
+          secret:
+            secretName: kubernetes-config

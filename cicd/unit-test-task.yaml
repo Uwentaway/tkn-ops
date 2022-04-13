@@ -8,7 +8,7 @@ spec:
   steps:
     - name: unit-test
       workingDir: $(workspaces.source.path)
-      image: golang:1.17.5
+      image: registry.cn-hangzhou.aliyuncs.com/coolops/golang:1.17.5
       env:
         - name: GOPROXY
           value: https://goproxy.cn
