@@ -1,0 +1,50 @@
+apiVersion: tekton.dev/v1beta1
+kind: PipelineRun
+metadata:
+  generateName: test-hello-word-pipeline-run- 
+  namespace: tekton-devops-pipeline
+spec:
+  pipelineRef:
+    name: rd-pipeline
+  params:
+    - name: revision
+      value: test
+    - name: git_url
+      value: https://gitee.com/coolops/devops-hello-world.git    
+    - name: imageUrl
+      value: registry.cn-hangzhou.aliyuncs.com/coolops/devops-hello-world
+    - name: imageTag
+      value: latest
+    - name: pathToDockerfile
+      value: Dockerfile
+    - name: chart_username
+      value: AoWepE
+    - name: chart_password
+      value: XnifbX36lQ
+    - name: app_name
+      value: hello-world
+    - name: namespace
+      value: default
+    - name: sonar_username
+      value: admin
+    - name: sonar_password
+      value: Joker@123456
+    - name: sonar_url
+      value: http://sonarqube.coolops.cn
+  workspaces:
+    - name: rd-repo-pvc
+      volumeClaimTemplate:
+        spec:
+          accessModes:
+          - ReadWriteOnce
+          storageClassName: local 
+          resources:
+            requests:
+              storage: 1Gi
+    - name: docker-config
+      secret:
+        secretName: docker-config
+    - name: kubernetes-config
+      secret:
+        secretName: kubernetes-config
+  serviceAccountName: tekton-build-sa 
