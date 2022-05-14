@@ -52,7 +52,7 @@ spec:
         - name: sonar_url
           value: http://sonarqube.coolops.cn
         pipelineRef:
-          name: rd-pipeline
+          name: devops-hello-world-pipeline
         workspaces:
         - name: rd-repo-pvc
           volumeClaimTemplate:
