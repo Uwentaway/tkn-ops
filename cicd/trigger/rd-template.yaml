@@ -44,7 +44,7 @@ spec:
         - name: app_name
           value: hello-liuct
         - name: namespace
-          value: default
+          value: demo
         - name: sonar_username
           value: xxxx
         - name: sonar_password
