@@ -28,7 +28,7 @@ spec:
         serviceAccountName: tekton-build-sa
         params: 
         - name: revision
-          value: test
+          value: $(tt.params.gitrevision)
         - name: git_url
           value: $(tt.params.gitrepositoryurl)
         - name: imageUrl
