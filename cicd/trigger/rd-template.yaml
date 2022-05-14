@@ -54,7 +54,7 @@ spec:
         pipelineRef:
           name: devops-hello-world-pipeline
         workspaces:
-        - name: rd-repo-pvc
+        - name: go-repo-pvc
           volumeClaimTemplate:
             spec:
               accessModes:
