@@ -2,6 +2,7 @@ apiVersion: tekton.dev/v1beta1
 kind: Task
 metadata:
   name: git-clone
+  namespace: demo
   labels:
     app.kubernetes.io/version: "0.5"
   annotations:
@@ -98,7 +99,8 @@ spec:
     - name: gitInitImage
       description: The image providing the git-init binary that this Task runs.
       type: string
-      default: "gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/git-init:v0.21.0"
+      default: "registry.cn-hangzhou.aliyuncs.com/uwentaway/pipeline-git-init:v0.34.1"
+      #default: "gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/git-init:v0.21.0"
     - name: userHome
       description: |
         Absolute path to the user's home directory. Set this explicitly if you are running the image as a non-root user or have overridden

@@ -2,6 +2,7 @@ apiVersion: triggers.tekton.dev/v1beta1
 kind: TriggerTemplate
 metadata:
   name: trigger-rd-pipeline-template
+  namespace: demo
 spec:
   params:
     - name: gitrevision
@@ -31,7 +32,7 @@ spec:
         - name: git_url
           value: $(tt.params.gitrepositoryurl)
         - name: imageUrl
-          value: registry.cn-hangzhou.aliyuncs.com/uwentaway/$(tt.params.projectname)
+          value: gitopsliu/$(tt.params.projectname)
         - name: imageTag
           value: latest
         - name: pathToDockerfile
@@ -58,7 +59,7 @@ spec:
             spec:
               accessModes:
               - ReadWriteOnce
-              storageClassName: local 
+              storageClassName: openebs-hostpath
               resources:
                 requests:
                   storage: 1Gi

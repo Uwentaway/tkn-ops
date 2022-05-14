@@ -2,6 +2,7 @@ apiVersion: tekton.dev/v1alpha1
 kind: Task
 metadata:
   name: deploy-to-k8s
+  namespace: demo
 spec:
   workspaces:
     - name: source

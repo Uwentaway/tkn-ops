@@ -2,6 +2,7 @@ apiVersion: triggers.tekton.dev/v1beta1
 kind: TriggerBinding
 metadata:
   name: trigger-rd-pipeline-bingding
+  namespace: demo
 spec:
   params:
     - name: gitrevision

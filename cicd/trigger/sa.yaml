@@ -2,6 +2,7 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: tekton-triggers-gitlab-sa
+  namespace: demo
 secrets:
 - name: gitlab-secret
 - name: gitlab-auth
@@ -31,7 +32,7 @@ metadata:
 subjects:
   - kind: ServiceAccount
     name: tekton-triggers-gitlab-sa
-    namespace: tekton-devops-pipeline
+    namespace: demo
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole

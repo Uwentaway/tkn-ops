@@ -2,6 +2,7 @@ apiVersion: tekton.dev/v1beta1
 kind: Pipeline
 metadata:
   name: devops-hello-world-pipeline
+  namespace: demo
 spec:
   workspaces: # 声明 workspaces
     - name: go-repo-pvc
@@ -15,7 +16,7 @@ spec:
       default: "master"
     - name: gitInitImage
       type: string
-      default: "registry.cn-hangzhou.aliyuncs.com/coolops/tekton-git-init:v0.29"
+      default: "registry.cn-hangzhou.aliyuncs.com/uwentaway/pipeline-git-init:v0.34.1"
     # 定义镜像参数
     - name: pathToDockerfile
       description: The path to the build context, used by Kaniko - within the workspace
