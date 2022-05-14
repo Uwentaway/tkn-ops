@@ -31,7 +31,7 @@ spec:
         - name: git_url
           value: $(tt.params.gitrepositoryurl)
         - name: imageUrl
-          value: registry.cn-hangzhou.aliyuncs.com/coolops/$(tt.params.projectname)
+          value: registry.cn-hangzhou.aliyuncs.com/uwentaway/$(tt.params.projectname)
         - name: imageTag
           value: latest
         - name: pathToDockerfile
@@ -41,7 +41,7 @@ spec:
         - name: chart_password
           value: xxxxx
         - name: app_name
-          value: hello-world
+          value: hello-liuct
         - name: namespace
           value: default
         - name: sonar_username
