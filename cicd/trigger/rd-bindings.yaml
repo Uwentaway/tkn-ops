@@ -10,6 +10,7 @@ spec:
     - name: namespace
       value: tekton-devops-pipeline
     - name: gitrepositoryurl
-      value: $(body.project.git_http_url)
+      value: http://192.168.4.79/root/tkn-ops.git
+      #value: $(body.project.git_http_url)
     - name: projectname
       value: $(body.project.name)
