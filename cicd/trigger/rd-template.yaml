@@ -23,7 +23,7 @@ spec:
       kind: PipelineRun
       metadata:
         name: rd-pipeline-run-$(uid)
-        namespace: tekton-devops-pipeline 
+        namespace: demo
       spec:
         serviceAccountName: tekton-build-sa
         params: 
