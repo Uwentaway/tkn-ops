@@ -1,0 +1,45 @@
+apiVersion: tekton.dev/v1alpha1
+kind: Task
+metadata:
+  name: push-image-config
+spec:
+  workspaces:
+    - name: source
+    - name: kubernetesconfig
+      mountPath: /root/.kube
+  params:
+    - name: giturl
+    - name: IMAGE
+    - name: TAG
+    - name: GIT_USERNAME
+    - name: GIT_PASSWORD
+    - name: CHART_GITLAB_URL
+    - name: GIT_NAME
+      default: liuct
+    - name: GIT_EMAIL
+      default: liuct@dosec.cn
+    - name: CHART_DIR
+  steps:
+    - name: update-image
+      image: registry.cn-hangzhou.aliyuncs.com/coolops/helm-kubectl-curl-git-jq-yq:latest
+      workingDir: $(workspaces.source.path)
+      script: |
+        #git remote set-url origin http://$(params.GIT_USERNAME):$(params.GIT_PASSWORD)@$(params.CHART_GITLAB_URL)
+        git remote set-url origin http://$(params.GIT_USERNAME):$(params.GIT_PASSWORD)@$(params.giturl)
+        git config --global user.name "$(params.GIT_NAME)"
+        git config --global user.email "$(params.GIT_EMAIL)"
+        #合并chart分支
+        #git clone http://$(params.GIT_USERNAME):$(params.GIT_PASSWORD)@$(params.CHART_GITLAB_URL) /opt/devops-cd
+        #cd /opt/devops-cd/$(params.CHART_DIR)
+        #git pull
+        #更新 helm 配置的镜像
+        yq w --inplace deploy/helm/httpserver/values.yaml 'image.name' "$(params.IMAGE)"
+        yq w --inplace deploy/helm/httpserver/values.yaml 'image.tag' "$(params.TAG)"
+        #更新 kustomize 配置镜像
+        sed -i s#IMAGE#$(params.IMAGE)#g deploy/kustomize/deployment.yaml
+        sed -i s#TAG#$(params.TAG)#g deploy/kustomize/deployment.yaml
+        #更新 kubectl 配置镜像
+        sed -i s#IMAGE#$(params.IMAGE)#g deploy/deployment.yaml
+        sed -i s#TAG#$(params.TAG)#g deploy/deployment.yaml
+        git commit -am 'image update'
+        git push

@@ -65,12 +65,17 @@ spec:
           workspace: go-repo-pvc
         - name: dockerconfig
           workspace: docker-config
-    - name: deploy-to-k8s
+#部署可以替换成update image to git
+    - name: push-image-config
       taskRef:
-        name: deploy-to-k8s
+        name: push-image-config
       params:
-        - name: pathToYamlFile
-          value: deployment.yaml
+        - name: giturl
+          value: $(params.git_url)
+        - name: GIT_USERNAME
+          value: root
+        - name: GIT_PASSWORD
+          value: 1W7pGoSZAeEs1l_T_dtrP
         - name: IMAGE
           value: $(params.imageUrl)
         - name: TAG

@@ -1,0 +1,6 @@
+spec:
+  destination:
+    server: https://kubernetes.default.svc
+  source:
+    repoURL: http://192.168.4.79/root/tkn-ops.git
+    targetRevision: HEAD

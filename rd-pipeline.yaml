@@ -2,6 +2,7 @@ apiVersion: tekton.dev/v1beta1
 kind: Pipeline
 metadata:
   name: rd-pipeline
+  namespace: demo
 spec:
   workspaces: # 声明 workspaces
     - name: rd-repo-pvc

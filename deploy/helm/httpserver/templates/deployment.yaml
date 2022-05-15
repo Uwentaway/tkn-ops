@@ -4,7 +4,7 @@ metadata:
   labels:
     app: httpserver
   name: httpserver
-  namespace: demo
+  namespace: {{ .Values.namespace }}
 spec:
   progressDeadlineSeconds: 600
   replicas: 1
@@ -29,8 +29,8 @@ spec:
         - env:
             - name: TZ
               value: Asia/Shanghai
-          image: IMAGE:TAG
-          imagePullPolicy: IfNotPresent
+          image: "{{ .Values.image.name }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
           lifecycle:
             preStop:
               exec:
@@ -69,19 +69,3 @@ spec:
       dnsPolicy: ClusterFirst
       restartPolicy: Always
       schedulerName: default-scheduler
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: httpserver
-  namespace: demo
-spec:
-  ports:
-    - name: http
-      port: 8080
-      protocol: TCP
-      targetPort: http
-  selector:
-    app: httpserver
-  sessionAffinity: None
-  type: NodePort
