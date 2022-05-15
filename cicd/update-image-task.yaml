@@ -39,4 +39,4 @@ spec:
         sed -i s#TAG#$(params.TAG)#g deploy/deployment.yaml
         git add .
         git commit -am 'image update'
-        git push
+        git push origin master
