@@ -14,24 +14,19 @@ spec:
     - name: TAG
     - name: GIT_USERNAME
     - name: GIT_PASSWORD
-    - name: CHART_GITLAB_URL
     - name: GIT_NAME
       default: liuct
     - name: GIT_EMAIL
       default: liuct@dosec.cn
-    - name: CHART_DIR
   steps:
     - name: update-image
       image: registry.cn-hangzhou.aliyuncs.com/coolops/helm-kubectl-curl-git-jq-yq:latest
       workingDir: $(workspaces.source.path)
       script: |
-        #git remote set-url origin http://$(params.GIT_USERNAME):$(params.GIT_PASSWORD)@$(params.CHART_GITLAB_URL)
         git remote set-url origin http://$(params.GIT_USERNAME):$(params.GIT_PASSWORD)@$(params.giturl)
         git config --global user.name "$(params.GIT_NAME)"
         git config --global user.email "$(params.GIT_EMAIL)"
         #合并chart分支
-        #git clone http://$(params.GIT_USERNAME):$(params.GIT_PASSWORD)@$(params.CHART_GITLAB_URL) /opt/devops-cd
-        #cd /opt/devops-cd/$(params.CHART_DIR)
         #git pull
         #更新 helm 配置的镜像
         yq w --inplace deploy/helm/httpserver/values.yaml 'image.name' "$(params.IMAGE)"

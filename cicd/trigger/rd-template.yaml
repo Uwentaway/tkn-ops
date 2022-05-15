@@ -37,20 +37,20 @@ spec:
           value: latest
         - name: pathToDockerfile
           value: Dockerfile
-        - name: chart_username
-          value: xxxx
-        - name: chart_password
-          value: xxxxx
+       # - name: chart_username
+       #   value: xxxx
+       # - name: chart_password
+       #   value: xxxxx
         - name: app_name
           value: hello-liuct
         - name: namespace
           value: demo
-        - name: sonar_username
-          value: xxxx
-        - name: sonar_password
-          value: xxxxx
-        - name: sonar_url
-          value: http://sonarqube.coolops.cn
+      #  - name: sonar_username
+      #    value: xxxx
+      #  - name: sonar_password
+      #    value: xxxxx
+      #  - name: sonar_url
+      #    value: http://sonarqube.coolops.cn
         pipelineRef:
           name: devops-hello-world-pipeline
         workspaces:
