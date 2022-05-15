@@ -18,7 +18,7 @@ func main() {
 
 		c.JSON(http.StatusOK, gin.H{
 			"data": res,
-			"say":  "Hello liuct",
+			"say":  "Hello @Tekton; @Argo-CD",
 		})
 	})
 	r.GET("/healthz", func(c *gin.Context) {
