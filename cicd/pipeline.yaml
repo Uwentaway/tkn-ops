@@ -80,6 +80,8 @@ spec:
           value: $(params.imageUrl)
         - name: TAG
           value: $(tasks.clone.results.commit)
+        - name: projectname
+          value: $(tt.params.projectname)
       workspaces:
         - name: source
           workspace: go-repo-pvc

@@ -10,6 +10,7 @@ spec:
       mountPath: /root/.kube
   params:
     - name: giturl
+    - name: projectname
     - name: IMAGE
     - name: TAG
     - name: GIT_USERNAME
@@ -26,8 +27,10 @@ spec:
         git remote set-url origin http://$(params.GIT_USERNAME):$(params.GIT_PASSWORD)@$(params.giturl)
         git config --global user.name "$(params.GIT_NAME)"
         git config --global user.email "$(params.GIT_EMAIL)"
+        git clone http://$(params.GIT_USERNAME):$(params.GIT_PASSWORD)@$(params.giturl)
+        cd  $(params.projectname)
         #合并chart分支
-        #git pull
+        git pull
         #更新 helm 配置的镜像
         yq w --inplace deploy/helm/httpserver/values.yaml 'image.name' "$(params.IMAGE)"
         yq w --inplace deploy/helm/httpserver/values.yaml 'image.tag' "$(params.TAG)"
@@ -37,6 +40,5 @@ spec:
         #更新 kubectl 配置镜像
         sed -i s#IMAGE#$(params.IMAGE)#g deploy/deployment.yaml
         sed -i s#TAG#$(params.TAG)#g deploy/deployment.yaml
-        git add .
         git commit -am 'image update'
-        git push origin master
+        git push
