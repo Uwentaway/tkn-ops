@@ -37,5 +37,6 @@ spec:
         #更新 kubectl 配置镜像
         sed -i s#IMAGE#$(params.IMAGE)#g deploy/deployment.yaml
         sed -i s#TAG#$(params.TAG)#g deploy/deployment.yaml
+        git add .
         git commit -am 'image update'
         git push
